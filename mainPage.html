@@ -3,257 +3,302 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Dog Breeds</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Dog Breeds</h1>
-  <p>Table to show the breeds of different types of dogs</p><br>
 
-  <form id="dogForm">
-    <label for="dogId">ID:</label>
-    <input type="number" id="dogId"><br><br>
-    
-    <label for="breedName">Breed Name:</label>
-    <input type="text" id="breedName"><br><br>
-    
-    <label for="breedDescription">Description:</label>
-    <input type="text" id="breedDescription"><br><br>
-    
-    <label for="breedMinLife">Life Span (years):</label>
-    <input type="number" id="breedMinLife"><br><br>
-    
-    <label for="breedMaleWeight">Male weight (kg):</label>
-    <input type="number" id="breedMaleWeight"><br><br>
-    
-    <label for="breedFemaleWeight">Female weight (kg):</label>
-    <input type="number" id="breedFemaleWeight"><br><br>
-  </form>
+  <header class="page-header">
+    <h1>Dog Breeds</h1>
+    <p>Registry of dog breeds — manage records using the form below</p>
+  </header>
 
-  <button onclick="addDog()">Add dog</button><br><br>
-  <button onclick="updateDog()">Update dog</button><br><br>
-  <button onclick="deleteDog()">Delete dog</button><br><br>
-  <button onclick="enableDisable()">Enable/Disable dog</button><br><br>
+  <div class="main-layout">
 
-  <table border="1px">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Breed Name</th>
-        <th>Description</th>
-        <th>Life Span (years)</th>
-        <th>Male weight (kg)</th>
-        <th>Female weight (kg)</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody id="tableBody">
-      
-    </tbody>
-  </table>
-</body>
-</html>
+    <aside class="form-card">
+      <h2>Breed record</h2>
+      <form id="dogForm">
+        <div class="field">
+          <label for="dogId">ID</label>
+          <input type="number" id="dogId" placeholder="Enter an ID to load">
+        </div>
+        <div class="field">
+          <label for="breedName">Breed name</label>
+          <input type="text" id="breedName" placeholder="e.g. Golden Retriever">
+        </div>
+        <div class="field">
+          <label for="breedDescription">Description</label>
+          <input type="text" id="breedDescription" placeholder="Brief description">
+        </div>
+        <div class="field">
+          <label for="breedMinLife">Life span (years)</label>
+          <input type="number" id="breedMinLife" placeholder="e.g. 12">
+        </div>
+        <div class="field">
+          <label for="breedMaleWeight">Male weight (kg)</label>
+          <input type="number" id="breedMaleWeight" placeholder="e.g. 30">
+        </div>
+        <div class="field">
+          <label for="breedFemaleWeight">Female weight (kg)</label>
+          <input type="number" id="breedFemaleWeight" placeholder="e.g. 25">
+        </div>
+      </form>
 
-<script>
+      <div class="btn-group">
+        <button class="btn btn-primary"   onclick="addDog()">Add breed</button>
+        <button class="btn btn-secondary" onclick="updateDog()">Update breed</button>
+        <button class="btn btn-danger"    onclick="deleteDog()">Delete breed</button>
+        <button class="btn btn-toggle"    onclick="enableDisable()">Enable / Disable</button>
+      </div>
+    </aside>
 
-  const ENDPOINT = 'https://6a0e0387769682b8ee772204.mockapi.io/api/dog-breeds'
-  let apiResponse = null;
+    <section class="table-section">
+      <h2>Registered breeds</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Breed name</th>
+              <th>Description</th>
+              <th>Life span</th>
+              <th>Male (kg)</th>
+              <th>Female (kg)</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr>
+              <td colspan="7" class="empty-state">Loading breeds…</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
 
-  function xmlFetchData(){
-    const xhr = new XMLHttpRequest()
-    xhr.responseType = 'json'
-    xhr.onreadystatechange = function(){
-      if(xhr.readyState === 4 && xhr.status === 200){
-        const data = xhr.response
-        console.log(data)
-        apiResponse = data
-        createTable(apiResponse)
-      }
-    }
-    xhr.onerror = function(){
-      console.log("Error en la peticion")
-      return null
-    }
-    xhr.open('GET', ENDPOINT, true)
-    xhr.send()
-  }
+  </div>
 
-  xmlFetchData()
+  <script>
+    const ENDPOINT = 'https://6a0e0387769682b8ee772204.mockapi.io/api/dog-breeds'
+    let apiResponse = null;
 
-  function createTable(apiResponse){
-    console.log(apiResponse);
-    const tableBody = document.getElementById("tableBody");
-    tableBody.innerHTML = '';
-    apiResponse.forEach(dog => {
-      const row = document.createElement("tr");
-      const statusText = dog.disabled ? "Disabled" : "Active";
-      row.innerHTML = `
-      <td>${dog.id}</td>
-      <td>${dog.breedName}</td>
-      <td>${dog.breedDescription}</td>
-      <td>${dog.breedMinLife}</td>
-      <td>${dog.breedMaleWeight}</td>
-      <td>${dog.breedFemaleWeight}</td>
-      <td>${statusText}</td>
-      `
-      tableBody.appendChild(row)
-    });
-  }
-
-  // Event listener for ID number selector
-  document.getElementById('dogId').addEventListener('input', function() {
-    const idValue = this.value;
-    const existingDog = apiResponse ? apiResponse.find(dog => String(dog.id) === String(idValue)) : null;
-    if (existingDog) {
-      document.getElementById('breedName').value = existingDog.breedName || '';
-      document.getElementById('breedDescription').value = existingDog.breedDescription || '';
-      document.getElementById('breedMinLife').value = existingDog.breedMinLife || '';
-      document.getElementById('breedMaleWeight').value = existingDog.breedMaleWeight || '';
-      document.getElementById('breedFemaleWeight').value = existingDog.breedFemaleWeight || '';
-    } else {
-      document.getElementById('breedName').value = '';
-      document.getElementById('breedDescription').value = '';
-      document.getElementById('breedMinLife').value = '';
-      document.getElementById('breedMaleWeight').value = '';
-      document.getElementById('breedFemaleWeight').value = '';
-    }
-  });
-
-  function addDog(){
-    const breedName = document.getElementById('breedName').value;
-    const breedDescription = document.getElementById('breedDescription').value;
-    const breedMinLife = document.getElementById('breedMinLife').value;
-    const breedMaleWeight = document.getElementById('breedMaleWeight').value;
-    const breedFemaleWeight = document.getElementById('breedFemaleWeight').value;
-
-    const newDog = {
-      breedName,
-      breedDescription,
-      breedMinLife,
-      breedMaleWeight,
-      breedFemaleWeight,
-      disabled: false
-    };
-
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', ENDPOINT, true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.onreadystatechange = function(){
-      if(xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 201)){
-        console.log("Dog added successfully");
-        xmlFetchData();
-        document.getElementById('dogForm').reset();
-      }
-    };
-    xhr.send(JSON.stringify(newDog));
-  }
-
-  function updateDog(){
-    const id = document.getElementById('dogId').value;
-    if(!id){
-      alert("Please select a dog ID");
-      return;
-    }
-    const dog = apiResponse ? apiResponse.find(d => String(d.id) === String(id)) : null;
-    if(!dog){
-      alert("Dog not found");
-      return;
-    }
-    if(dog.disabled){
-      alert("This dog is disabled and cannot be updated.");
-      return;
-    }
-
-    const breedName = document.getElementById('breedName').value;
-    const breedDescription = document.getElementById('breedDescription').value;
-    const breedMinLife = document.getElementById('breedMinLife').value;
-    const breedMaleWeight = document.getElementById('breedMaleWeight').value;
-    const breedFemaleWeight = document.getElementById('breedFemaleWeight').value;
-
-    const updatedDog = {
-      breedName,
-      breedDescription,
-      breedMinLife,
-      breedMaleWeight,
-      breedFemaleWeight
-    };
-
-    const xhr = new XMLHttpRequest();
-    xhr.open('UPDATE', `${ENDPOINT}/${id}`, true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.onreadystatechange = function(){
-      if(xhr.readyState === 4){
-        if(xhr.status >= 200 && xhr.status < 300){
-          console.log("Updated dog successfully using UPDATE method");
-          xmlFetchData();
-        } else {
-          console.warn("UPDATE method failed or is not supported (status " + xhr.status + "). Falling back to PUT.");
-          const fallbackXhr = new XMLHttpRequest();
-          fallbackXhr.open('PUT', `${ENDPOINT}/${id}`, true);
-          fallbackXhr.setRequestHeader('Content-Type', 'application/json');
-          fallbackXhr.onreadystatechange = function(){
-            if(fallbackXhr.readyState === 4 && fallbackXhr.status >= 200 && fallbackXhr.status < 300){
-              console.log("Updated dog successfully using PUT method fallback");
-              xmlFetchData();
-            }
-          };
-          fallbackXhr.send(JSON.stringify(updatedDog));
+    function xmlFetchData(){
+      const xhr = new XMLHttpRequest()
+      xhr.responseType = 'json'
+      xhr.onreadystatechange = function(){
+        if(xhr.readyState === 4 && xhr.status === 200){
+          const data = xhr.response
+          console.log(data)
+          apiResponse = data
+          createTable(apiResponse)
         }
       }
-    };
-    xhr.send(JSON.stringify(updatedDog));
-  }
-
-  function deleteDog(){
-    const id = document.getElementById('dogId').value;
-    if(!id){
-      alert("Please select a dog ID");
-      return;
-    }
-    const dog = apiResponse ? apiResponse.find(d => String(d.id) === String(id)) : null;
-    if(!dog){
-      alert("Dog not found");
-      return;
-    }
-    if(dog.disabled){
-      alert("This dog is disabled and cannot be deleted.");
-      return;
-    }
-
-    const xhr = new XMLHttpRequest();
-    xhr.open('DELETE', `${ENDPOINT}/${id}`, true);
-    xhr.onreadystatechange = function(){
-      if(xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 204)){
-        console.log("Dog deleted successfully");
-        xmlFetchData();
-        document.getElementById('dogForm').reset();
+      xhr.onerror = function(){
+        console.log("Error en la peticion")
+        return null
       }
-    };
-    xhr.send();
-  }
-
-  function enableDisable(){
-    const id = document.getElementById('dogId').value;
-    if(!id){
-      alert("Please select a dog ID");
-      return;
-    }
-    const dog = apiResponse ? apiResponse.find(d => String(d.id) === String(id)) : null;
-    if(!dog){
-      alert("Dog not found");
-      return;
+      xhr.open('GET', ENDPOINT, true)
+      xhr.send()
     }
 
-    const newDisabledState = !dog.disabled;
+    xmlFetchData()
 
-    const xhr = new XMLHttpRequest();
-    xhr.open('PUT', `${ENDPOINT}/${id}`, true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.onreadystatechange = function(){
-      if(xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 204)){
-        console.log("Dog disabled status updated to " + newDisabledState);
-        xmlFetchData();
+    function createTable(apiResponse){
+      console.log(apiResponse);
+      const tableBody = document.getElementById("tableBody");
+      tableBody.innerHTML = '';
+
+      if(!apiResponse || apiResponse.length === 0){
+        tableBody.innerHTML = '<tr><td colspan="7" class="empty-state">No breeds registered yet.</td></tr>';
+        return;
       }
-    };
-    xhr.send(JSON.stringify({ disabled: newDisabledState }));
-  }
-</script>
+
+      apiResponse.forEach(dog => {
+        const row = document.createElement("tr");
+        const statusBadge = dog.disabled
+          ? '<span class="badge badge-disabled">Disabled</span>'
+          : '<span class="badge badge-active">Active</span>';
+
+        // Primero insertamos las celdas simples
+        row.innerHTML = `
+          <td>${dog.id}</td>
+          <td>${dog.breedName}</td>
+          <td class="desc-cell">${dog.breedDescription}</td>
+          <td>${dog.breedMinLife}</td>
+          <td>${dog.breedMaleWeight}</td>
+          <td>${dog.breedFemaleWeight}</td>
+          <td>${statusBadge}</td>
+        `;
+
+        // Al hacer click en la celda de descripción, se expande o colapsa la fila
+        row.querySelector('.desc-cell').addEventListener('click', function() {
+          row.classList.toggle('expanded');
+        });
+
+        tableBody.appendChild(row)
+      });
+    }
+
+    document.getElementById('dogId').addEventListener('input', function() {
+      const idValue = this.value;
+      const existingDog = apiResponse ? apiResponse.find(dog => String(dog.id) === String(idValue)) : null;
+      if (existingDog) {
+        document.getElementById('breedName').value = existingDog.breedName || '';
+        document.getElementById('breedDescription').value = existingDog.breedDescription || '';
+        document.getElementById('breedMinLife').value = existingDog.breedMinLife || '';
+        document.getElementById('breedMaleWeight').value = existingDog.breedMaleWeight || '';
+        document.getElementById('breedFemaleWeight').value = existingDog.breedFemaleWeight || '';
+      } else {
+        document.getElementById('breedName').value = '';
+        document.getElementById('breedDescription').value = '';
+        document.getElementById('breedMinLife').value = '';
+        document.getElementById('breedMaleWeight').value = '';
+        document.getElementById('breedFemaleWeight').value = '';
+      }
+    });
+
+    function addDog(){
+      const breedName = document.getElementById('breedName').value;
+      const breedDescription = document.getElementById('breedDescription').value;
+      const breedMinLife = document.getElementById('breedMinLife').value;
+      const breedMaleWeight = document.getElementById('breedMaleWeight').value;
+      const breedFemaleWeight = document.getElementById('breedFemaleWeight').value;
+
+      const newDog = {
+        breedName,
+        breedDescription,
+        breedMinLife,
+        breedMaleWeight,
+        breedFemaleWeight,
+        disabled: false
+      };
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', ENDPOINT, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onreadystatechange = function(){
+        if(xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 201)){
+          console.log("Dog added successfully");
+          xmlFetchData();
+          document.getElementById('dogForm').reset();
+        }
+      };
+      xhr.send(JSON.stringify(newDog));
+    }
+
+    function updateDog(){
+      const id = document.getElementById('dogId').value;
+      if(!id){
+        alert("Please select a dog ID");
+        return;
+      }
+      const dog = apiResponse ? apiResponse.find(d => String(d.id) === String(id)) : null;
+      if(!dog){
+        alert("Dog not found");
+        return;
+      }
+      if(dog.disabled){
+        alert("This dog is disabled and cannot be updated.");
+        return;
+      }
+
+      const breedName = document.getElementById('breedName').value;
+      const breedDescription = document.getElementById('breedDescription').value;
+      const breedMinLife = document.getElementById('breedMinLife').value;
+      const breedMaleWeight = document.getElementById('breedMaleWeight').value;
+      const breedFemaleWeight = document.getElementById('breedFemaleWeight').value;
+
+      const updatedDog = {
+        breedName,
+        breedDescription,
+        breedMinLife,
+        breedMaleWeight,
+        breedFemaleWeight
+      };
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('UPDATE', `${ENDPOINT}/${id}`, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onreadystatechange = function(){
+        if(xhr.readyState === 4){
+          if(xhr.status >= 200 && xhr.status < 300){
+            console.log("Updated dog successfully using UPDATE method");
+            xmlFetchData();
+          } else {
+            console.warn("UPDATE method failed or is not supported (status " + xhr.status + "). Falling back to PUT.");
+            const fallbackXhr = new XMLHttpRequest();
+            fallbackXhr.open('PUT', `${ENDPOINT}/${id}`, true);
+            fallbackXhr.setRequestHeader('Content-Type', 'application/json');
+            fallbackXhr.onreadystatechange = function(){
+              if(fallbackXhr.readyState === 4 && fallbackXhr.status >= 200 && fallbackXhr.status < 300){
+                console.log("Updated dog successfully using PUT method fallback");
+                xmlFetchData();
+              }
+            };
+            fallbackXhr.send(JSON.stringify(updatedDog));
+          }
+        }
+      };
+      xhr.send(JSON.stringify(updatedDog));
+    }
+
+    function deleteDog(){
+      const id = document.getElementById('dogId').value;
+      if(!id){
+        alert("Please select a dog ID");
+        return;
+      }
+      const dog = apiResponse ? apiResponse.find(d => String(d.id) === String(id)) : null;
+      if(!dog){
+        alert("Dog not found");
+        return;
+      }
+      if(dog.disabled){
+        alert("This dog is disabled and cannot be deleted.");
+        return;
+      }
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('DELETE', `${ENDPOINT}/${id}`, true);
+      xhr.onreadystatechange = function(){
+        if(xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 204)){
+          console.log("Dog deleted successfully");
+          xmlFetchData();
+          document.getElementById('dogForm').reset();
+        }
+      };
+      xhr.send();
+    }
+
+    function enableDisable(){
+      const id = document.getElementById('dogId').value;
+      if(!id){
+        alert("Please select a dog ID");
+        return;
+      }
+      const dog = apiResponse ? apiResponse.find(d => String(d.id) === String(id)) : null;
+      if(!dog){
+        alert("Dog not found");
+        return;
+      }
+
+      const newDisabledState = !dog.disabled;
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('PUT', `${ENDPOINT}/${id}`, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onreadystatechange = function(){
+        if(xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 204)){
+          console.log("Dog disabled status updated to " + newDisabledState);
+          xmlFetchData();
+        }
+      };
+      xhr.send(JSON.stringify({ disabled: newDisabledState }));
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,242 @@
+/* ================================================
+   PALETA DE COLORES — Tierra y verde
+   ================================================ */
+:root {
+  --verde-oscuro:  #4A6741;
+  --verde-medio:   #7A9E6E;
+  --verde-claro:   #d6ebd3;
+  --fondo:         #F5F0E8;
+  --fondo-card:    #FDFAF5;
+  --acento:        #C8A96E;
+  --marron:        #7C5C3A;
+  --texto:         #3b2e1e;
+  --texto-suave:   #6b5740;
+  --borde:         #d9cfc0;
+}
+
+/* ================================================
+   RESET BÁSICO
+   ================================================ */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ================================================
+   BODY Y FONDO DE PÁGINA
+   ================================================ */
+body {
+  font-family: 'Source Sans 3', sans-serif;
+  background-color: var(--fondo);
+  color: var(--texto);
+  padding: 2rem 1.5rem;
+}
+
+/* ================================================
+   ENCABEZADO
+   ================================================ */
+.page-header {
+  max-width: 900px;
+  margin: 0 auto 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--verde-oscuro);
+}
+
+.page-header h1 {
+  font-size: 2rem;
+  color: var(--verde-oscuro);
+}
+
+.page-header p {
+  color: var(--texto-suave);
+  margin-top: 0.3rem;
+}
+
+/* ================================================
+   LAYOUT PRINCIPAL — formulario + tabla en columnas
+   ================================================ */
+.main-layout {
+  max-width: 900px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* En pantallas chicas, pone todo en una sola columna */
+@media (max-width: 680px) {
+  .main-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ================================================
+   CARDS (formulario y tabla)
+   ================================================ */
+.form-card,
+.table-section {
+  background: var(--fondo-card);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.form-card h2,
+.table-section h2 {
+  font-size: 1rem;
+  color: var(--verde-oscuro);
+  padding-bottom: 0.6rem;
+  margin-bottom: 1.2rem;
+  border-bottom: 1px solid var(--borde);
+}
+
+/* ================================================
+   CAMPOS DEL FORMULARIO
+   ================================================ */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 0.9rem;
+}
+
+.field label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--texto-suave);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.field input {
+  font-size: 0.95rem;
+  color: var(--texto);
+  background: var(--fondo);
+  border: 1px solid var(--borde);
+  border-radius: 7px;
+  padding: 0.5rem 0.7rem;
+  outline: none;
+  width: 100%;
+}
+
+.field input:focus {
+  border-color: var(--verde-medio);
+  box-shadow: 0 0 0 3px rgba(122, 158, 110, 0.2);
+}
+
+/* ================================================
+   BOTONES
+   ================================================ */
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1.2rem;
+}
+
+.btn {
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.55rem 1rem;
+  border-radius: 7px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Cada botón tiene su propio color según su función */
+.btn-primary  { background-color: var(--verde-oscuro); color: #f0f7ee; }
+.btn-secondary{ background-color: var(--acento);       color: #3b2200; }
+.btn-danger   { background-color: transparent; color: #b84040; border: 1px solid #b84040; }
+.btn-toggle   { background-color: var(--marron);       color: #f5ece2; }
+
+/* ================================================
+   TABLA
+   ================================================ */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  /* table-layout: fixed hace que las columnas respeten los anchos definidos */
+  table-layout: fixed;
+}
+
+/* Ancho de cada columna — ajustá según necesites */
+table th:nth-child(1) { width: 50px;  } /* ID */
+table th:nth-child(2) { width: 18%;   } /* Breed name */
+table th:nth-child(3) { width: 30%;   } /* Description */
+table th:nth-child(4) { width: 10%;   } /* Life span */
+table th:nth-child(5) { width: 10%;   } /* Male */
+table th:nth-child(6) { width: 10%;   } /* Female */
+table th:nth-child(7) { width: 12%;   } /* Status */
+
+thead th {
+  background-color: var(--verde-oscuro);
+  color: var(--verde-claro);
+  text-align: left;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+tbody tr {
+  border-bottom: 1px solid var(--borde);
+}
+
+tbody td {
+  padding: 0.65rem 0.85rem;
+  /* Evita que el texto desborde la celda */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* La descripción se corta con "..." por defecto */
+tbody td.desc-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 0;
+  cursor: pointer;
+}
+
+tbody tr.expanded td.desc-cell {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+}
+
+/* La fila expandida cambia de fondo para destacarse */
+tbody tr.expanded {
+  background-color: var(--verde-claro);
+}
+
+/* ================================================
+   ESTADO (Active / Disabled)
+   ================================================ */
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-active   { background-color: #e2f0de; color: #2e5426; }
+.badge-disabled { background-color: #efe9df; color: #a0917e; }
+
+/* ================================================
+   ESTADO VACÍO DE LA TABLA
+   ================================================ */
+.empty-state {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: #c9ae91;
+  font-style: italic;
+}
